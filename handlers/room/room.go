@@ -146,9 +146,9 @@ func (r *Room) run() {
 				} else if m.MsgType == "SPY" {
 					r.Gamelogs = append(r.Gamelogs, *m)
 					// generate new game state with ans cards
-					gs := r.GameState
-					gs.Cards = r.anscards
-					spyData, _ = json.Marshal(gs)
+					// gs := r.GameState
+					// gs.Cards = r.anscards
+					// spyData, _ = json.Marshal(gs)
 					msgData, _ = json.Marshal(r.GameState)
 				} else {
 					msgData, _ = json.Marshal(m)
@@ -156,9 +156,11 @@ func (r *Room) run() {
 
 				for p := range r.players {
 					if p.Id == r.BlueSpy.Id || p.Id == r.RedSpy.Id {
-						if spyData != nil {
-							p.send <- spyData
-						}
+						gs := r.GameState
+						gs.Cards = r.anscards
+						spyData, _ = json.Marshal(gs)
+						p.send <- spyData
+
 						continue
 					}
 					select {
